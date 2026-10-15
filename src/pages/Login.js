@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { Box, Button, Card, CardContent, TextField, Typography, Alert, CircularProgress, Grid } from '@mui/material';
+import { useNavigate, useLocation, Link as RouterLink } from 'react-router-dom';
+import { Box, Button, Card, CardContent, TextField, Typography, Alert, CircularProgress, Grid, Link } from '@mui/material';
 import MedicationIcon from '@mui/icons-material/Medication';
 import ScienceIcon from '@mui/icons-material/Science';
 import BiotechIcon from '@mui/icons-material/Biotech';
@@ -33,6 +33,7 @@ export default function Login() {
   const [loading, setLoading] = useState(false);
   const { login } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
 
   const handleSubmit = async e => {
     e.preventDefault();
@@ -100,6 +101,7 @@ export default function Login() {
               <Typography variant="body2" color="text.secondary" mb={3}>
                 Medicine Manufacturing Management System
               </Typography>
+              {location.state?.registered && <Alert severity="success" sx={{ mb: 2 }}>Account created. Please sign in.</Alert>}
               {error && <Alert severity="error" sx={{ mb: 2 }}>{error}</Alert>}
               <form onSubmit={handleSubmit}>
                 <TextField fullWidth label="Username" value={username} onChange={e => setUsername(e.target.value)}
@@ -113,7 +115,7 @@ export default function Login() {
                 </Button>
               </form>
               <Typography variant="caption" color="text.secondary" sx={{ mt: 2, display: 'block' }}>
-                Default: admin / changeme
+                Need an account? <Link component={RouterLink} to="/register">Create account</Link>
               </Typography>
             </CardContent>
           </Card>
