@@ -10,6 +10,7 @@ import Suppliers from './pages/Suppliers';
 import Distribution from './pages/Distribution';
 import Reports from './pages/Reports';
 import Login from './pages/Login';
+import Register from './pages/Register';
 import { AuthProvider, useAuth } from './context/AuthContext';
 
 function PrivateRoute({ children }) {
@@ -22,6 +23,7 @@ function App() {
     <AuthProvider>
       <Routes>
         <Route path="/login" element={<Login />} />
+        <Route path="/register" element={<Register />} />
         <Route path="/" element={
           <PrivateRoute>
             <Layout />
