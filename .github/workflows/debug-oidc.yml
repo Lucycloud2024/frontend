@@ -1,0 +1,25 @@
+name: debug-oidc
+on:
+  push:
+    branches: [develop]
+    paths: ['.github/workflows/debug-oidc.yml']
+permissions:
+  id-token: write
+  contents: read
+jobs:
+  debug:
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Show identity and secret length
+        env:
+          ACCT: ${{ secrets.AWS_ACCOUNT_ID }}
+        run: |
+          echo "account id length: ${#ACCT}"
+          TOKEN=$(curl -s -H "Authorization: bearer $ACTIONS_ID_TOKEN_REQUEST_TOKEN" "$ACTIONS_ID_TOKEN_REQUEST_URL&audience=sts.amazonaws.com" | python3 -c 'import sys,json; print(json.load(sys.stdin)["value"])')
+          echo "$TOKEN" | cut -d. -f2 | python3 -c 'import sys,base64,json; s=sys.stdin.read().strip(); s+="="*(-len(s)%4); d=json.loads(base64.urlsafe_b64decode(s)); print("sub:", d["sub"]); print("aud:", d["aud"])'
+      - name: Try the real role with a hard-coded ARN
+        uses: aws-actions/configure-aws-credentials@v5
+        with:
+          role-to-assume: arn:aws:iam::929778606127:role/pharma-dev-github-actions-role
+          aws-region: us-east-1
+      - run: aws sts get-caller-identity
